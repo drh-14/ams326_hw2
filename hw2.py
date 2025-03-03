@@ -10,13 +10,25 @@ class Q1:
     def part1(self):
         n = 1
         while 1 / np.pow(n,2) >= self.TOL:
-            kidneyArea = sum(self.f((a + b) / 2) * (b - a) for a,b in [[((2 * np.pi) / n) * i, ((2 * np.pi) / n) * (i + 1)] for i in range(n)])
+            stepSize = (2 * np.pi) / n
+            kidneyArea = sum(self.f((a + b) / 2) * (b - a) for a,b in [[stepSize * i, stepSize * (i + 1)] for i in range(n)])
             n += 1
-        return f'Area Computed By Rectangle Method: {kidneyArea - self.circleArea}'
+        print(f'Area Computed By Rectangle Method: {kidneyArea - self.circleArea}')
                 
     def part2(self):
+        n = 1
         kidneyArea = 0
-        return f'Area Computed By Trapezoidal Method: {kidneyArea - self.circleArea}'
+        while 1 / np.pow(n,3) >= self.TOL:
+            stepSize = (2 * np.pi) / n
+            intervals = [[stepSize * i, stepSize * (i + 1)] for i in range(n)]
+            points = set()
+            for a,b in intervals:
+                points.add(a)
+                points.add(b)
+            points = sorted(list(points))
+            kidneyArea = (stepSize / 2) * (sum(2 * self.f(points[i]) for i in range(1, len(points) - 1)) + self.f(points[0]) + self.f(points[-1]))
+            n += 1
+        print(f'Area Computed By Trapezoidal Method: {kidneyArea - self.circleArea}')
 
 class Q2:
     def __init__(self, n):
@@ -24,9 +36,11 @@ class Q2:
         self.b = np.array([1 for _ in range(n)])
         
     def solve(self):
-        return np.linalg.matmul(np.linalg.inv(self.A), self.b)
+        print(f'Solution Vector: {np.linalg.matmul(np.linalg.inv(self.A), self.b)}')
         
 
 if __name__ == "__main__":
-    print(Q1().part1())
-    print(Q2(66).solve())
+    Q1 = Q1()
+    Q1.part1()
+    Q1.part2()
+    Q2(66).solve()
