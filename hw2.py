@@ -34,11 +34,24 @@ class Q2:
     def __init__(self, n):
         self.A = np.array([[random.uniform(-1,1) for _ in range(n)] for _ in range(n)])
         self.b = np.array([1 for _ in range(n)])
+        self.n = n
         
     def solve(self):
-        print(f'Solution Vector: {np.linalg.matmul(np.linalg.inv(self.A), self.b)}')
-        
-
+        for i in range(self.n):
+            val = self.A[i][i]
+            for j in range(self.n):
+                self.A[i][j] /= val
+            self.b[i] /= val 
+            for k in range(i + 1, self.n):
+                for m in range(self.n):
+                    self.A[k][m] -= (self.A[k][i] * self.A[i][m])
+                self.b[k] -= (self.A[k][i] * self.b[i])
+        for i in range(self.n - 1, -1, -1):
+            for j in range(i - 1, -1, -1):
+                self.b[j] -=  (self.A[j][i] * self.b[i])
+                self.A[j][i] -= (self.A[j][i] * self.A[i][i])
+        print(self.b)
+                        
 if __name__ == "__main__":
     Q1 = Q1()
     Q1.part1()
